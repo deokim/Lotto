@@ -70,19 +70,6 @@ jobs:
         run: |
           python Web_Crawl.py
 
-      - name: Debug Git state
-        run: |
-          echo "===== LOCAL COMMIT ====="
-          git rev-parse HEAD
-
-          echo "===== REMOTE MAIN ====="
-          git ls-remote origin refs/heads/main
-
-          echo "===== LOCAL BRANCH ====="
-          git branch -vv
-
-          echo "===== RECENT COMMITS ====="
-          git log --oneline --decorate -5
 
       # ========================================================
       # 6. Excel 파일 변경사항 확인 후 commit / push
