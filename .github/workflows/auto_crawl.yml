@@ -31,9 +31,12 @@ jobs:
       - name: Run crawler script
         run: python Web_Crawl.py
 
-      # 직접 git 명령어를 치는 대신 공식 자동 커밋 액션 사용
-      - name: Commit & Push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Automated Lotto data update
-          file_pattern: 'lotto_raw.xlsx'
+      # 강제 푸시 적용
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "action@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git add .
+          git commit -m "Automated Lotto data update" || exit 0
+          git push --force origin main
