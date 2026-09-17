@@ -3,8 +3,8 @@ name: Auto Update Lotto
 on:
   schedule:
     # 매주 토요일 밤 10시(KST)
-    # UTC 기준 토요일 13:00 = KST 토요일 22:00
-    - cron: '0 13 * * 6'
+    # 예시.  UTC 기준 토요일 13:00 = KST 토요일 22:00
+    - cron: '30 14 * * 6'
 
   # GitHub Actions 화면에서 수동 실행 가능
   workflow_dispatch:
@@ -70,6 +70,21 @@ jobs:
         run: |
           python Web_Crawl.py
 
+
+      - name: Debug Git state
+        run: |
+          echo "===== LOCAL COMMIT ====="
+          git rev-parse HEAD
+
+          echo "===== REMOTE MAIN ====="
+          git ls-remote origin refs/heads/main
+
+          echo "===== LOCAL BRANCH ====="
+          git branch -vv
+
+          echo "===== RECENT COMMITS ====="
+          git log --oneline --decorate -5
+
       # ========================================================
       # 6. Excel 파일 변경사항 확인 후 commit / push
       # ========================================================
@@ -78,23 +93,16 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "action@github.com"
 
-          # lotto_raw.xlsx만 commit 대상
           git add lotto_raw.xlsx
 
-          # 변경사항이 없으면 정상 종료
           if git diff --cached --quiet; then
             echo "변경된 내용이 없어 푸시를 스킵합니다."
             exit 0
           fi
 
-          # 변경사항 commit
           git commit -m "Automated Lotto data update"
 
-          # 최신 main으로 다시 한번 동기화
           git fetch origin main
-
-          # 현재 commit 위에 최신 remote main을 반영
           git rebase origin/main
 
-          # main으로 push
           git push origin HEAD:main
