@@ -90,7 +90,9 @@ jobs:
 
           git fetch origin main
           git rebase origin/main
-                    echo "===== BEFORE PUSH ====="
+
+
+          echo "===== BEFORE PUSH ====="
           echo "LOCAL HEAD:"
           git rev-parse HEAD
 
