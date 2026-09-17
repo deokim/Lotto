@@ -17,6 +17,12 @@ cnt=0
 df_new=df_raw.sort_values(by='Round',ascending=True)
 
 tmp_date=old_date
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+}
+
+
 while ((now-tmp_date).days // 7 ):
     cnt +=1
     tmp_round=old_round+cnt
@@ -25,7 +31,7 @@ while ((now-tmp_date).days // 7 ):
     win_number_byround={}
 
     try:
-        response = requests.get(URL, timeout=15) # 타임아웃 설정
+        response = requests.get(URL, headers=headers, timeout=15) # 타임아웃 설정
         data=response.json()
         lotto_info = data["data"]["list"][0]
 
