@@ -90,5 +90,20 @@ jobs:
 
           git fetch origin main
           git rebase origin/main
+                    echo "===== BEFORE PUSH ====="
+          echo "LOCAL HEAD:"
+          git rev-parse HEAD
+
+          echo "REMOTE MAIN:"
+          git ls-remote origin refs/heads/main
+
+          echo "===== LOCAL BRANCH ====="
+          git branch -vv
+
+          echo "===== RECENT COMMITS ====="
+          git log --oneline --decorate -5
+
+          echo "===== STATUS ====="
+          git status
 
           git push origin HEAD:main
