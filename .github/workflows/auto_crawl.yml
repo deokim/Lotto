@@ -36,6 +36,7 @@ jobs:
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "action@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git pull origin main --rebase
           git add .
           git commit -m "Automated Lotto data update" || exit 0
           git push
