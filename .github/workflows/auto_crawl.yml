@@ -109,3 +109,25 @@ jobs:
           git status
 
           git push origin HEAD:main
+
+# 1. 성공했을 때 보내는 텔레그램 알림
+      - name: Send Telegram Success Alert
+        if: success()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ✅ [Lotto Automation] 성공!
+            로또 데이터가 최신 상태로 갱신되고 깃허브에 성공적으로 푸시되었습니다.
+
+      # 2. 실패했을 때 보내는 텔레그램 알림
+      - name: Send Telegram Failure Alert
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ❌ [Lotto Automation] 실패!
+            로또 데이터 업데이트 중 에러가 발생했습니다. 로그를 확인해주세요.
