@@ -20,25 +20,29 @@ with pd.ExcelWriter(r"D:\test.xlsx", engine='openpyxl') as writer:
      position_by_number={}
      for col in df_onehot.columns:
           skip_by_number[col]=(df_onehot[df_onehot[col]>0]).index.tolist()
+          #최초 Skip은 별도계산 후 추가
+          skip_by_number[col].append(len(df))
           position_by_number[col]=df_onehot_position[df_onehot_position[col]>0][col].tolist()
           
-
+     # Shift 연산을 위해 skip_by_number을 DataFrame으로 변환
      df_skip_result =pd.DataFrame({k: pd.Series(v) for k, v in skip_by_number.items()})
 
      # 최종회차 당첨번호여부에 따라 Skip계산을 별도로 적용
      for col in df_onehot.columns:
-          if df_skip_result.loc[0,col]:
+          if df_skip_result.loc[0,col]:                #최종회차 당첨번호가 아닌 경우
                first_skip=df_skip_result.loc[0,col]
                df_skip_result[col]=df_skip_result[col]-df_skip_result[col].shift(1)-1
                df_skip_result.loc[0,col]=first_skip
           else:
                df_skip_result[col]=df_skip_result[col]-df_skip_result[col].shift(1)-1
                df_skip_result.loc[0,col]=0
+                    
 
      df_position_result=pd.DataFrame({k:pd.Series(v) for k,v in position_by_number.items()})
 
      df_skip_result.to_excel(writer,sheet_name='B제외')
      df_position_result.to_excel(writer,sheet_name="B제외_AsdP")
+     df.to_excel(writer,sheet_name="raw_data",index=False)
 
 
          
