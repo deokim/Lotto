@@ -1,0 +1,133 @@
+name: Auto Update Lotto
+
+on:
+  schedule:
+    # 매주 토요일 밤 10시(KST)
+    # 예시.  UTC 기준 토요일 13:00 = KST 토요일 22:00
+    - cron: '30 14 * * 6'
+
+  # GitHub Actions 화면에서 수동 실행 가능
+  workflow_dispatch:
+
+# ============================================================
+# 중요:
+# 동일한 workflow가 동시에 실행되는 것을 방지
+# 예약 실행과 수동 실행이 겹쳐도 Excel 파일 충돌을 막음
+# ============================================================
+concurrency:
+  group: lotto-data-update
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ========================================================
+      # 1. GitHub 저장소 가져오기
+      # ========================================================
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
+      # ========================================================
+      # 2. Python 설정
+      # ========================================================
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # ========================================================
+      # 3. 필요한 Python 패키지 설치
+      # ========================================================
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pandas openpyxl
+
+      # ========================================================
+      # 4. 원격 main 브랜치와 동기화
+      #
+      # crawler 실행 전에 반드시 최신 main 기준으로 작업
+      # ========================================================
+      - name: Sync with remote main
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
+      # ========================================================
+      # 5. 동행복권 데이터 크롤링
+      # ========================================================
+      - name: Run crawler script
+        run: |
+          python Web_Crawl.py
+
+
+      # ========================================================
+      # 6. Excel 파일 변경사항 확인 후 commit / push
+      # ========================================================
+      - name: Commit and push changes
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "action@github.com"
+
+          git add lotto_raw.xlsx
+
+          if git diff --cached --quiet; then
+            echo "변경된 내용이 없어 푸시를 스킵합니다."
+            exit 0
+          fi
+
+          git commit -m "Automated Lotto data update"
+
+          git fetch origin main
+          git rebase origin/main
+
+
+          echo "===== BEFORE PUSH ====="
+          echo "LOCAL HEAD:"
+          git rev-parse HEAD
+
+          echo "REMOTE MAIN:"
+          git ls-remote origin refs/heads/main
+
+          echo "===== LOCAL BRANCH ====="
+          git branch -vv
+
+          echo "===== RECENT COMMITS ====="
+          git log --oneline --decorate -5
+
+          echo "===== STATUS ====="
+          git status
+
+          git push origin HEAD:main
+
+# 1. 성공했을 때 보내는 텔레그램 알림
+      - name: Send Telegram Success Alert
+        if: success()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ✅ [Lotto Automation] 성공!
+            로또 데이터가 최신 상태로 갱신되고 깃허브에 성공적으로 푸시되었습니다.
+
+      # 2. 실패했을 때 보내는 텔레그램 알림
+      - name: Send Telegram Failure Alert
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ❌ [Lotto Automation] 실패!
+            로또 데이터 업데이트 중 에러가 발생했습니다. 로그를 확인해주세요.
