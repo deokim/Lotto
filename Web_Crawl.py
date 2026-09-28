@@ -4,7 +4,10 @@ import pandas as pd
 import time
 from datetime import datetime, timedelta
 
-df_raw=pd.read_excel('lotto_raw.xlsx')
+# filename=r'D:\Program_Pjt\Lotto\lotto_raw.csv'
+filename=r'lotto_raw.csv'
+# df_raw=pd.read_excel('lotto_raw.xlsx')
+df_raw=pd.read_csv(filename)
 old_round=df_raw.iloc[0,0]
 old_date=df_raw.iloc[0,1]
 
@@ -15,8 +18,8 @@ now=datetime.now()
 cnt=0
 
 df_new=df_raw.sort_values(by='Round',ascending=True)
-
-tmp_date=old_date
+tmp_date=pd.to_datetime(old_date)
+# tmp_date=datetime.strptime(old_date,"%Y-%m-%d %H:%M:%S")
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -57,4 +60,5 @@ else:
     df_add=pd.DataFrame(add_win_numbers)
     df_new=pd.concat([df_new,df_add])
     df_new=df_new.sort_values(by="Round", ascending=False)
-    df_new.to_excel(r'lotto_raw.xlsx',index=False,sheet_name='rawdata')
+    # df_new.to_excel(r'lotto_raw.xlsx',index=False,sheet_name='rawdata')
+    df_new.to_csv(filename,index=False)
