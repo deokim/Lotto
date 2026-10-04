@@ -1,5 +1,5 @@
 ### Lotto RawData 
-#### lotto_raw.xlsx
+#### lotto_raw.xlsx → lotto_raw.csv로 변경예정
 - 대한민국 Lotto 역대당첨번호 정보
 - Header : 회차, 추첨일자, #1, #2, #3, #4, #5, #6, #B 
 
