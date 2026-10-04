@@ -79,7 +79,7 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "action@github.com"
 
-          git add lotto_raw.xlsx
+          git add lotto_raw.csv
 
           if git diff --cached --quiet; then
             echo "변경된 내용이 없어 푸시를 스킵합니다."
