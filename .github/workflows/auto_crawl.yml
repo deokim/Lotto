@@ -67,6 +67,7 @@ jobs:
       # 5. 동행복권 데이터 크롤링
       # ========================================================
       - name: Run crawler script
+        id: crawl_step
         run: |
           python Web_Crawl.py
 
@@ -75,6 +76,7 @@ jobs:
       # 6. Excel 파일 변경사항 확인 후 commit / push
       # ========================================================
       - name: Commit and push changes
+        id: git_step
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "action@github.com"
@@ -151,4 +153,4 @@ jobs:
           message: |
             ❌ <b>[Lotto Automation] 실패!</b>
             로또 데이터 업데이트 중 에러가 발생했습니다. 로그를 확인해주세요.
-            👉 <a href="https://github.com{{ github.repository }}/actions/runs/${{ github.run_id }}">실행 로그 확인하기</a>
+            👉 <a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}">실행 로그 확인하기</a>
