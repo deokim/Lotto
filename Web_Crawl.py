@@ -74,7 +74,7 @@ if cnt==0:
     latest_row = df_raw.iloc[0,2:].astype(int).tolist()
     nums_str=f"{', '.join(map(str,latest_row[:6]))} + B:{latest_row[6]}"
     if "GITHUB_OUTPUT" in os.environ:
-        with open(os.environ["GITHUB_OUPUT"],"a") as f:
+        with open(os.environ["GITHUB_OUTPUT"],"a") as f:
             f.write(f"최종회차={old_round}\n")
             f.write(f"당첨번호={nums_str}\n")
     sys.exit(0)
@@ -93,7 +93,7 @@ else:
     latest_row= df_new.iloc[0,2:].astype(int).tolist()
     nums_str=f"{', '.join(map(str,latest_row[:6]))} + B:{latest_row[6]}"
     if "GITHUB_OUTPUT" in os.environ:
-        with open(os.environ["GITHUB_OUPUT"],"a") as f:
+        with open(os.environ["GITHUB_OUTPUT"],"a") as f:
             f.write(f"업데이트회차={tmp_round}\n")
             f.write(f"당첨번호={nums_str}\n")    
     
