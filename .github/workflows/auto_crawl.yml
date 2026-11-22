@@ -117,9 +117,12 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          # disable_web_page_preview: true
           message: |
-            ✅ [Lotto Automation] 성공!
+            ✅ <b>[Lotto Automation] 성공!</b>
             로또 데이터가 최신 상태로 갱신되고 깃허브에 성공적으로 푸시되었습니다.
+            👉 <a href="https://github.com/deokim/Lotto/blob/main/lotto_raw.csv">결과보기</a>
 
       # 2. 실패했을 때 보내는 텔레그램 알림
       - name: Send Telegram Failure Alert
@@ -129,5 +132,6 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            ❌ [Lotto Automation] 실패!
+            ❌ <b>[Lotto Automation] 실패!</b>
             로또 데이터 업데이트 중 에러가 발생했습니다. 로그를 확인해주세요.
+            👉 <a href="https://github.com{{ github.repository }}/actions/runs/${{ github.run_id }}">실행 로그 확인하기</a>
