@@ -75,8 +75,8 @@ if cnt==0:
     nums_str=f"{', '.join(map(str,latest_row[:6]))} + B:{latest_row[6]}"
     if "GITHUB_OUTPUT" in os.environ:
         with open(os.environ["GITHUB_OUTPUT"],"a") as f:
-            f.write(f"최종회차={old_round}\n")
-            f.write(f"당첨번호={nums_str}\n")
+            f.write(f"latest_round={old_round}\n")
+            f.write(f"win_nums={nums_str}\n")
     sys.exit(0)
 # 업데이트할 회차가 있는데 실패한 경우 -> 비정상 종료(1) -> 실패 알림 발송
 if len(missing_round):
@@ -94,7 +94,7 @@ else:
     nums_str=f"{', '.join(map(str,latest_row[:6]))} + B:{latest_row[6]}"
     if "GITHUB_OUTPUT" in os.environ:
         with open(os.environ["GITHUB_OUTPUT"],"a") as f:
-            f.write(f"업데이트회차={tmp_round}\n")
-            f.write(f"당첨번호={nums_str}\n")    
+            f.write(f"latest_round={tmp_round}\n")
+            f.write(f"win_nums={nums_str}\n")    
     
     sys.exit(0)
