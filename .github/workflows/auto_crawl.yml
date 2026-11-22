@@ -84,7 +84,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "변경된 내용이 없어 푸시를 스킵합니다."
             echo "status=skipped" >> $GITHUB_OUTPUT
-            exit 1
+            exit 0
           fi
 
           git commit -m "Automated Lotto data update"
