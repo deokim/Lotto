@@ -122,7 +122,7 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: html
-          # disable_web_page_preview: true
+          disable_web_page_preview: true
           message: |
             ✅ <b>[Lotto Automation] ${{ steps.crawl_step.outputs.latest_round }}회 업데이트 완료!</b>
             🎱 당첨번호: <b>${{ steps.crawl_step.outputs.win_nums }}</b>
@@ -136,6 +136,7 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: html
+          disable_web_page_preview: true
           message: |
             <b>[Lotto Automation] 업데이트 건너뜀</b>
             ℹ️ 현 최종회차 ${{ steps.crawl_step.outputs.latest_round }}회
@@ -150,6 +151,7 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: html
+          disable_web_page_preview: true
           message: |
             ❌ <b>[Lotto Automation] 실패!</b>
             로또 데이터 업데이트 중 에러가 발생했습니다. 로그를 확인해주세요.
