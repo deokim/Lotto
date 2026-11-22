@@ -83,6 +83,7 @@ jobs:
 
           if git diff --cached --quiet; then
             echo "변경된 내용이 없어 푸시를 스킵합니다."
+            echo "status=skipped" >> $GITHUB_OUTPUT
             exit 1
           fi
 
@@ -90,6 +91,7 @@ jobs:
 
           git fetch origin main
           git rebase origin/main
+          echo "status=updated" >> $GITHUB_OUTPUT
 
 
           echo "===== BEFORE PUSH ====="
@@ -110,9 +112,9 @@ jobs:
 
           git push origin HEAD:main
 
-# 1. 성공했을 때 보내는 텔레그램 알림
+      # 성공했을 때 보내는 텔레그램 알림
       - name: Send Telegram Success Alert
-        if: success()
+        if: success() && steps.git_step.outputs.status == 'updated'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
@@ -120,17 +122,32 @@ jobs:
           format: html
           # disable_web_page_preview: true
           message: |
-            ✅ <b>[Lotto Automation] 성공!</b>
-            로또 데이터가 최신 상태로 갱신되고 깃허브에 성공적으로 푸시되었습니다.
+            ✅ <b>[Lotto Automation] ${{ steps.crawl_step.outputs.latest_round }}회 업데이트 완료!</b>
+            🎱 당첨번호: <b>${{ steps.crawl_step.outputs.win_nums }}</b>
             👉 <a href="https://github.com/deokim/Lotto/blob/main/lotto_raw.csv">결과보기</a>
 
-      # 2. 실패했을 때 보내는 텔레그램 알림
+      # 최신상태라 추가할 데이터가 없을 때 보내는 텔레그램 알림
+      - name: Send Telegram Skipped Alert
+        if: success() && steps.git_step.outputs.status == 'skipped'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          message: |
+            <b>[Lotto Automation] 업데이트 건너뜀</b>
+            ℹ️ 현 최종회차 ${{ steps.crawl_step.outputs.latest_round }}회
+            🎱 당첨번호: <b>${{ steps.crawl_step.outputs.win_nums }}</b>
+            👉 <a href="https://github.com/deokim/Lotto/blob/main/lotto_raw.csv">현재 데이터 확인</a>
+
+      # 실패했을 때 보내는 텔레그램 알림
       - name: Send Telegram Failure Alert
         if: failure()
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
           message: |
             ❌ <b>[Lotto Automation] 실패!</b>
             로또 데이터 업데이트 중 에러가 발생했습니다. 로그를 확인해주세요.
